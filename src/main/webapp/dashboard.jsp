@@ -176,7 +176,7 @@
             <h3>Rooms</h3>
             <p>Manage room availability</p>
         </div>
-        <div class="card">
+        <div class="card" onclick="location.href='<%= request.getContextPath() %>/reservations'">
             <div class="icon">&#128203;</div>
             <h3>Reservations</h3>
             <p>View and manage bookings</p>

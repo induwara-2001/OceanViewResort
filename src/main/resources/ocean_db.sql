@@ -17,6 +17,20 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP    DEFAULT CURRENT_TIMESTAMP
 );
 
+-- Reservations table
+CREATE TABLE IF NOT EXISTS reservations (
+    id                 INT           AUTO_INCREMENT PRIMARY KEY,
+    reservation_number VARCHAR(20)   NOT NULL UNIQUE,
+    guest_name         VARCHAR(100)  NOT NULL,
+    address            VARCHAR(255),
+    contact_number     VARCHAR(20)   NOT NULL,
+    room_type          VARCHAR(50)   NOT NULL,
+    check_in_date      DATE          NOT NULL,
+    check_out_date     DATE          NOT NULL,
+    status             VARCHAR(20)   NOT NULL DEFAULT 'PENDING',
+    created_at         TIMESTAMP     DEFAULT CURRENT_TIMESTAMP
+);
+
 -- ============================================================
 --  Sample users (password stored as plain text for now)
 -- ============================================================

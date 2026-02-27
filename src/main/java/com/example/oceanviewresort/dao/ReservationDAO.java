@@ -1,0 +1,26 @@
+package com.example.oceanviewresort.dao;
+
+import com.example.oceanviewresort.model.Reservation;
+
+import java.util.List;
+
+/**
+ * DAO interface for Reservation operations (SOA - Data Access Layer).
+ */
+public interface ReservationDAO {
+
+    /** Insert a new reservation. Returns generated ID, or -1 on failure. */
+    int save(Reservation reservation);
+
+    /** Retrieve all reservations ordered by created date desc. */
+    List<Reservation> findAll();
+
+    /** Find a single reservation by its ID. */
+    Reservation findById(int id);
+
+    /** Find a reservation by its reservation number. */
+    Reservation findByReservationNumber(String reservationNumber);
+
+    /** Get the count of reservations to help generate reservation numbers. */
+    int count();
+}
