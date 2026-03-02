@@ -116,6 +116,7 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
+        thead th:last-child { text-align: center; }
         tbody tr {
             border-bottom: 1px solid #f0f4f8;
             transition: background 0.15s;
@@ -128,6 +129,19 @@
             vertical-align: middle;
         }
         td.res-number { font-weight: 600; color: #088395; }
+        td.action-col { text-align: center; }
+        .btn-view {
+            background: #e0f7fa;
+            color: #0a4d68;
+            border: 1px solid #b2ebf2;
+            padding: 5px 14px;
+            border-radius: 7px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.2s;
+        }
+        .btn-view:hover { background: #b2ebf2; }
 
         /* Status badge */
         .badge {
@@ -201,6 +215,7 @@
                     <th>Check-In</th>
                     <th>Check-Out</th>
                     <th>Status</th>
+                    <th>Action</th>
                 </tr>
             </thead>
             <tbody>
@@ -221,6 +236,9 @@
                             if ("CHECKED_OUT".equalsIgnoreCase(status)) badgeClass = "badge-checked_out";
                         %>
                         <span class="badge <%= badgeClass %>"><%= status %></span>
+                    </td>
+                    <td class="action-col">
+                        <a href="<%= request.getContextPath() %>/reservations/view?id=<%= r.getId() %>" class="btn-view">View</a>
                     </td>
                 </tr>
                 <% } %>

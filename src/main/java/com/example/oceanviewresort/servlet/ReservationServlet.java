@@ -14,9 +14,9 @@ import java.io.IOException;
 import java.util.List;
 
 /**
- * Handles /reservations (list) and /reservations/add (add form + save).
+ * Handles /reservations (list), /reservations/add (form+save), /reservations/view (details).
  */
-@WebServlet(name = "ReservationServlet", urlPatterns = {"/reservations", "/reservations/add"})
+@WebServlet(name = "ReservationServlet", urlPatterns = {"/reservations", "/reservations/add", "/reservations/view"})
 public class ReservationServlet extends HttpServlet {
 
     private ReservationService reservationService;
@@ -42,6 +42,26 @@ public class ReservationServlet extends HttpServlet {
         if ("/reservations/add".equals(path)) {
             // Show the add reservation form
             request.getRequestDispatcher("/add-reservation.jsp").forward(request, response);
+
+        } else if ("/reservations/view".equals(path)) {
+            // Show details of a specific reservation
+            String idParam = request.getParameter("id");
+            if (idParam == null || idParam.isEmpty()) {
+                response.sendRedirect(request.getContextPath() + "/reservations");
+                return;
+            }
+            try {
+                int id = Integer.parseInt(idParam);
+                Reservation reservation = reservationService.getReservationById(id);
+                if (reservation == null) {
+                    response.sendRedirect(request.getContextPath() + "/reservations?notfound=1");
+                    return;
+                }
+                request.setAttribute("reservation", reservation);
+                request.getRequestDispatcher("/reservation-details.jsp").forward(request, response);
+            } catch (NumberFormatException e) {
+                response.sendRedirect(request.getContextPath() + "/reservations");
+            }
 
         } else {
             // Show the reservations list
