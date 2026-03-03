@@ -66,6 +66,73 @@
             background: rgba(255,255,255,0.35);
         }
 
+        .btn-exit {
+            background: rgba(220,53,69,0.25);
+            color: white;
+            border: 1px solid rgba(220,53,69,0.6);
+            padding: 7px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.87rem;
+            font-weight: 600;
+            transition: background 0.2s;
+            text-decoration: none;
+        }
+        .btn-exit:hover { background: rgba(220,53,69,0.5); }
+
+        /* Exit confirm overlay */
+        .overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.55);
+            z-index: 999;
+            align-items: center;
+            justify-content: center;
+        }
+        .overlay.show { display: flex; }
+        .confirm-box {
+            background: white;
+            border-radius: 18px;
+            padding: 38px 40px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: popIn 0.25s ease;
+        }
+        @keyframes popIn {
+            from { transform: scale(0.88); opacity: 0; }
+            to   { transform: scale(1);    opacity: 1; }
+        }
+        .confirm-box .c-icon { font-size: 2.8rem; margin-bottom: 14px; }
+        .confirm-box h3 { font-size: 1.2rem; color: #0a4d68; margin-bottom: 8px; }
+        .confirm-box p  { font-size: 0.88rem; color: #777; line-height: 1.6; margin-bottom: 24px; }
+        .confirm-btns { display: flex; gap: 12px; justify-content: center; }
+        .btn-confirm-exit {
+            background: linear-gradient(135deg, #c0392b, #e74c3c);
+            color: white;
+            border: none;
+            padding: 11px 26px;
+            border-radius: 10px;
+            font-size: 0.93rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+        .btn-confirm-exit:hover { opacity: 0.88; }
+        .btn-cancel-exit {
+            background: #f0f4f8;
+            color: #555;
+            border: 2px solid #ddd;
+            padding: 11px 26px;
+            border-radius: 10px;
+            font-size: 0.93rem;
+            cursor: pointer;
+        }
+        .btn-cancel-exit:hover { border-color: #aaa; }
+
         /* Main content */
         .main {
             padding: 35px 40px;
@@ -158,6 +225,7 @@
         </span>
         <a href="<%= request.getContextPath() %>/help">Help</a>
         <a href="<%= request.getContextPath() %>/logout" class="btn-logout">Logout</a>
+        <a href="javascript:void(0)" onclick="showExitConfirm()" class="btn-exit">&#x23FB; Exit System</a>
     </div>
 </nav>
 
@@ -202,6 +270,11 @@
             <h3>Settings</h3>
             <p>System configuration</p>
         </div>
+        <div class="card" onclick="showExitConfirm()" style="border: 2px solid #fdecea;">
+            <div class="icon">&#x23FB;</div>
+            <h3>Exit System</h3>
+            <p>Safely close your session</p>
+        </div>
     </div>
 
     <!-- Help shortcut banner -->
@@ -218,7 +291,38 @@
         </div>
     </div>
 
+</div><!-- /main -->
+
+<!-- ===== Exit Confirm Overlay ===== -->
+<div class="overlay" id="exitOverlay">
+    <div class="confirm-box">
+        <div class="c-icon">&#x23FB;</div>
+        <h3>Exit System?</h3>
+        <p>You are about to end your session. All unsaved work will be lost.<br>
+           Are you sure you want to exit?</p>
+        <div class="confirm-btns">
+            <button class="btn-cancel-exit" onclick="hideExitConfirm()">Cancel</button>
+            <a href="<%= request.getContextPath() %>/exit" class="btn-confirm-exit">Yes, Exit</a>
+        </div>
+    </div>
 </div>
+
+<script>
+    function showExitConfirm() {
+        document.getElementById('exitOverlay').classList.add('show');
+    }
+    function hideExitConfirm() {
+        document.getElementById('exitOverlay').classList.remove('show');
+    }
+    // Close on backdrop click
+    document.getElementById('exitOverlay').addEventListener('click', function(e) {
+        if (e.target === this) hideExitConfirm();
+    });
+    // Close on Escape
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') hideExitConfirm();
+    });
+</script>
 
 </body>
 </html>

@@ -314,6 +314,13 @@
         <a href="<%= request.getContextPath() %>/dashboard">Dashboard</a>
         <a href="<%= request.getContextPath() %>/reservations">Reservations</a>
         <a href="<%= request.getContextPath() %>/logout" class="btn-logout">Logout</a>
+        <a href="javascript:void(0)"
+           onclick="if(confirm('Exit the system? Your session will end.')) location.href='<%= request.getContextPath() %>/exit'"
+           style="background:rgba(220,53,69,0.25);color:white;border:1px solid rgba(220,53,69,0.6);
+                  padding:7px 16px;border-radius:8px;cursor:pointer;font-size:0.85rem;
+                  font-weight:600;text-decoration:none;">
+            &#x23FB; Exit System
+        </a>
     </div>
 </nav>
 
