@@ -262,6 +262,7 @@
     <div class="navbar-links">
         <a href="<%= request.getContextPath() %>/dashboard">Dashboard</a>
         <a href="<%= request.getContextPath() %>/reservations">Reservations</a>
+        <a href="<%= request.getContextPath() %>/help">Help</a>
         <a href="<%= request.getContextPath() %>/logout" class="btn-logout">Logout</a>
     </div>
 </nav>

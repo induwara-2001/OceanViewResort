@@ -156,6 +156,7 @@
         <span>Hello, <strong><%= loggedUser.getFullName() != null ? loggedUser.getFullName() : loggedUser.getUsername() %></strong>
             <span class="badge"><%= loggedUser.getRole() != null ? loggedUser.getRole() : "user" %></span>
         </span>
+        <a href="<%= request.getContextPath() %>/help">Help</a>
         <a href="<%= request.getContextPath() %>/logout" class="btn-logout">Logout</a>
     </div>
 </nav>
@@ -196,10 +197,24 @@
             <h3>Reports</h3>
             <p>Analytics &amp; statistics</p>
         </div>
-        <div class="card">
+        <div class="card" onclick="location.href='<%= request.getContextPath() %>/help'">
             <div class="icon">&#9881;</div>
             <h3>Settings</h3>
             <p>System configuration</p>
+        </div>
+    </div>
+
+    <!-- Help shortcut banner -->
+    <div style="margin-top:28px; background:linear-gradient(135deg,#e0f7fa,#e8f5e9);
+                border-radius:14px; padding:20px 28px; display:flex; align-items:center; gap:18px;
+                box-shadow:0 2px 10px rgba(0,0,0,0.05);">
+        <span style="font-size:2.2rem;">&#128218;</span>
+        <div>
+            <strong style="color:#0a4d68;font-size:1rem;">New to the system?</strong>
+            <p style="font-size:0.87rem;color:#555;margin-top:3px;">
+                Visit the <a href="<%= request.getContextPath() %>/help" style="color:#088395;font-weight:600;">Help &amp; Staff Guide</a>
+                for step-by-step instructions on managing reservations, generating invoices, and more.
+            </p>
         </div>
     </div>
 
