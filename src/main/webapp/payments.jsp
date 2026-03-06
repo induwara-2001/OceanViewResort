@@ -18,75 +18,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Payments - Ocean View Resort</title>
+    <title>Payments — Ocean View Resort</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f4f8; color: #333; }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', 'Segoe UI', sans-serif; background: #f1f5f9; color: #1e293b; }
 
-        .navbar { background: linear-gradient(135deg, #0a4d68, #088395); color: white; padding: 0 30px; height: 65px;
-            display: flex; align-items: center; justify-content: space-between; box-shadow: 0 3px 12px rgba(0,0,0,0.2); }
-        .navbar .brand { font-size: 1.3rem; font-weight: 700; }
-        .navbar-links { display: flex; align-items: center; gap: 20px; }
-        .navbar-links a { color: rgba(255,255,255,0.85); text-decoration: none; font-size: 0.9rem; }
-        .navbar-links a:hover { color: white; }
-        .btn-logout { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.5); padding: 7px 16px; border-radius: 8px; text-decoration: none; font-size: 0.85rem; }
-        .btn-exit   { background: rgba(220,53,69,0.25); color: white; border: 1px solid rgba(220,53,69,0.6); padding: 7px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; text-decoration: none; }
-        .btn-exit:hover { background: rgba(220,53,69,0.5); }
+        .navbar {
+            background: linear-gradient(135deg, #0a2540 0%, #0a4d68 60%, #088395 100%);
+            height: 68px; padding: 0 36px;
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 200;
+            box-shadow: 0 2px 20px rgba(10,37,64,0.4);
+        }
+        .navbar-left { display: flex; align-items: center; gap: 14px; }
+        .nav-logo {
+            width: 36px; height: 36px; border-radius: 9px;
+            background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
+            display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+        }
+        .nav-brand { color: white; font-size: 1rem; font-weight: 700; letter-spacing: -0.3px; }
+        .navbar-links { display: flex; align-items: center; gap: 4px; }
+        .navbar-links a {
+            color: rgba(255,255,255,0.75); text-decoration: none;
+            font-size: 0.84rem; font-weight: 500; padding: 6px 12px; border-radius: 8px;
+            transition: background 0.15s, color 0.15s;
+        }
+        .navbar-links a:hover { color: white; background: rgba(255,255,255,0.1); }
+        .navbar-links a.active { color: white; background: rgba(255,255,255,0.15); font-weight: 600; }
+        .btn-logout {
+            color: white; text-decoration: none;
+            background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25);
+            font-size: 0.82rem; font-weight: 600; padding: 7px 16px; border-radius: 8px;
+            transition: background 0.15s;
+        }
+        .btn-logout:hover { background: rgba(255,255,255,0.22); }
+        .btn-exit {
+            color: white; text-decoration: none;
+            background: rgba(239,68,68,0.2); border: 1px solid rgba(239,68,68,0.45);
+            font-size: 0.82rem; font-weight: 600; padding: 7px 16px; border-radius: 8px;
+            transition: background 0.15s;
+        }
+        .btn-exit:hover { background: rgba(239,68,68,0.4); }
 
-        .container { max-width: 1150px; margin: 35px auto; padding: 0 20px; }
-        .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
-        .page-header h1 { font-size: 1.5rem; color: #0a4d68; }
-        .page-header p  { font-size: 0.88rem; color: #888; margin-top: 3px; }
+        .container { max-width: 1200px; margin: 36px auto; padding: 0 28px; }
+        .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; }
+        .page-header h1 { font-size: 1.45rem; font-weight: 800; color: #0a2540; letter-spacing: -0.5px; }
+        .page-header p  { font-size: 0.84rem; color: #64748b; margin-top: 3px; }
 
         /* Revenue banner */
         .revenue-banner {
-            background: linear-gradient(135deg, #0a4d68, #088395);
-            color: white; border-radius: 16px; padding: 24px 30px;
-            margin-bottom: 24px; display: flex; align-items: center; justify-content: space-between;
+            background: linear-gradient(135deg, #0a2540 0%, #0a4d68 50%, #0bb8c4 100%);
+            color: white; border-radius: 18px; padding: 28px 36px;
+            margin-bottom: 26px; display: flex; align-items: center; justify-content: space-between;
+            box-shadow: 0 8px 32px rgba(10,37,64,0.25); position: relative; overflow: hidden;
         }
-        .revenue-banner .label { font-size: 0.88rem; opacity: 0.8; margin-bottom: 4px; }
-        .revenue-banner .amount { font-size: 2.2rem; font-weight: 700; }
-        .revenue-banner .sub { font-size: 0.82rem; opacity: 0.7; }
+        .revenue-banner::before {
+            content: ''; position: absolute; top: -40px; right: -40px;
+            width: 200px; height: 200px; border-radius: 50%;
+            background: rgba(255,255,255,0.06); pointer-events: none;
+        }
+        .revenue-banner .rb-left { position: relative; z-index: 1; }
+        .revenue-banner .label { font-size: 0.72rem; opacity: 0.7; margin-bottom: 4px; letter-spacing: 1px; text-transform: uppercase; font-weight: 600; }
+        .revenue-banner .amount { font-size: 2.4rem; font-weight: 900; letter-spacing: -1px; }
+        .revenue-banner .sub    { font-size: 0.8rem; opacity: 0.65; margin-top: 4px; }
+        .revenue-banner .rb-right { position: relative; z-index: 1; font-size: 3.5rem; }
 
-        .table-card { background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.07); overflow: hidden; }
+        .table-card { background: white; border-radius: 18px; box-shadow: 0 4px 24px rgba(0,0,0,0.07); overflow: hidden; border: 1px solid #e2e8f0; }
         table { width: 100%; border-collapse: collapse; }
-        thead { background: linear-gradient(135deg, #0a4d68, #088395); color: white; }
-        thead th { padding: 14px 16px; text-align: left; font-size: 0.82rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        thead { background: linear-gradient(135deg, #0a2540, #0a4d68); color: white; }
+        thead th { padding: 14px 18px; text-align: left; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.9px; }
         thead th:last-child { text-align: center; }
-        tbody tr { border-bottom: 1px solid #f0f4f8; transition: background 0.15s; }
+        tbody tr { border-bottom: 1px solid #f1f5f9; transition: background 0.12s; }
+        tbody tr:hover { background: #f8fbff; }
         tbody tr:last-child { border-bottom: none; }
-        tbody tr:hover { background: #f7fbfc; }
-        td { padding: 13px 16px; font-size: 0.9rem; vertical-align: middle; }
+        td { padding: 14px 18px; font-size: 0.88rem; vertical-align: middle; color: #334155; }
         td:last-child { text-align: center; }
-        .empty-state { text-align: center; padding: 50px; color: #bbb; font-size: 0.95rem; }
+        .empty-state { text-align: center; padding: 64px 20px; color: #94a3b8; font-size: 0.9rem; }
 
-        .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
-        .badge-confirmed    { background: #e6f9ef; color: #1a7a4a; }
-        .badge-pending      { background: #fff8e1; color: #856404; }
-        .badge-cancelled    { background: #fde8e8; color: #c0392b; }
-        .badge-checked-out  { background: #e8f0ff; color: #3b4fd4; }
+        .badge { display: inline-block; padding: 4px 11px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+        .badge-confirmed   { background: #f0fdf4; color: #166534; border: 1px solid #86efac; }
+        .badge-pending     { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
+        .badge-cancelled   { background: #fef2f2; color: #991b1b; border: 1px solid #fca5a5; }
+        .badge-checked-out { background: #eff6ff; color: #1d4ed8; border: 1px solid #93c5fd; }
 
-        .amount-cell { font-weight: 700; color: #0a4d68; }
-        .cancelled-amount { color: #c0392b; text-decoration: line-through; opacity: 0.6; }
+        .amount-cell { font-weight: 700; color: #0a2540; }
+        .cancelled-amount { color: #dc2626; text-decoration: line-through; opacity: 0.6; }
 
         .btn-invoice {
-            background: linear-gradient(135deg, #0a4d68, #088395);
-            color: white; text-decoration: none; padding: 6px 14px;
-            border-radius: 7px; font-size: 0.8rem; font-weight: 600; white-space: nowrap;
+            display: inline-flex; align-items: center; gap: 5px;
+            background: linear-gradient(135deg, #0a4d68, #0bb8c4);
+            color: white; text-decoration: none; padding: 7px 16px;
+            border-radius: 8px; font-size: 0.8rem; font-weight: 700;
+            font-family: 'Inter', sans-serif; white-space: nowrap;
+            transition: opacity 0.15s, transform 0.15s;
         }
-        .btn-invoice:hover { opacity: 0.88; }
+        .btn-invoice:hover { opacity: 0.9; transform: translateY(-1px); }
     </style>
 </head>
 <body>
 
 <nav class="navbar">
-    <div class="brand">&#127754; Ocean View Resort</div>
+    <div class="navbar-left">
+        <div class="nav-logo">&#127754;</div>
+        <span class="nav-brand">Ocean View Resort</span>
+    </div>
     <div class="navbar-links">
         <a href="<%= request.getContextPath() %>/dashboard">Dashboard</a>
         <a href="<%= request.getContextPath() %>/reservations">Reservations</a>
+        <a href="<%= request.getContextPath() %>/rooms">Rooms</a>
+        <a href="<%= request.getContextPath() %>/guests">Guests</a>
+        <a href="<%= request.getContextPath() %>/payments" class="active">Payments</a>
+        <a href="<%= request.getContextPath() %>/reports">Reports</a>
         <a href="<%= request.getContextPath() %>/help">Help</a>
         <a href="<%= request.getContextPath() %>/logout" class="btn-logout">Logout</a>
-        <a href="<%= request.getContextPath() %>/exit" onclick="return confirm('Exit and end your session?')" class="btn-exit">&#x23FB; Exit System</a>
+        <a href="<%= request.getContextPath() %>/exit" onclick="return confirm('Exit and end your session?')" class="btn-exit">&#x23FB; Exit</a>
     </div>
 </nav>
 

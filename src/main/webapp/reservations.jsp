@@ -18,217 +18,168 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Reservations - Ocean View Resort</title>
+    <title>Reservations — Ocean View Resort</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f0f4f8;
-            color: #333;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
+            background: #f1f5f9;
+            color: #1e293b;
         }
 
-        /* Navbar */
+        /* ── Navbar ── */
         .navbar {
-            background: linear-gradient(135deg, #0a4d68, #088395);
-            color: white;
-            padding: 0 30px;
-            height: 65px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.2);
+            background: linear-gradient(135deg, #0a2540 0%, #0a4d68 60%, #088395 100%);
+            height: 68px; padding: 0 36px;
+            display: flex; align-items: center; justify-content: space-between;
+            position: sticky; top: 0; z-index: 200;
+            box-shadow: 0 2px 20px rgba(10,37,64,0.4);
         }
-        .navbar .brand { font-size: 1.3rem; font-weight: 700; }
-        .navbar-links { display: flex; align-items: center; gap: 20px; }
-        .navbar-links a { color: rgba(255,255,255,0.85); text-decoration: none; font-size: 0.9rem; }
-        .navbar-links a:hover { color: white; }
+        .navbar-left { display: flex; align-items: center; gap: 14px; }
+        .nav-logo {
+            width: 36px; height: 36px; border-radius: 9px;
+            background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
+            display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+        }
+        .nav-brand { color: white; font-size: 1rem; font-weight: 700; letter-spacing: -0.3px; }
+        .navbar-links { display: flex; align-items: center; gap: 4px; }
+        .navbar-links a {
+            color: rgba(255,255,255,0.75); text-decoration: none;
+            font-size: 0.84rem; font-weight: 500; padding: 6px 12px; border-radius: 8px;
+            transition: background 0.15s, color 0.15s;
+        }
+        .navbar-links a:hover { color: white; background: rgba(255,255,255,0.1); }
+        .navbar-links a.active { color: white; background: rgba(255,255,255,0.15); font-weight: 600; }
         .btn-logout {
-            background: rgba(255,255,255,0.2);
-            color: white;
-            border: 1px solid rgba(255,255,255,0.5);
-            padding: 7px 16px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-size: 0.85rem;
+            color: white; text-decoration: none;
+            background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25);
+            font-size: 0.82rem; font-weight: 600; padding: 7px 16px; border-radius: 8px;
+            transition: background 0.15s;
         }
+        .btn-logout:hover { background: rgba(255,255,255,0.22); }
+        .btn-exit {
+            color: white; text-decoration: none;
+            background: rgba(239,68,68,0.2); border: 1px solid rgba(239,68,68,0.45);
+            font-size: 0.82rem; font-weight: 600; padding: 7px 16px; border-radius: 8px;
+            transition: background 0.15s;
+        }
+        .btn-exit:hover { background: rgba(239,68,68,0.4); }
 
         /* Page */
-        .container {
-            max-width: 1100px;
-            margin: 35px auto;
-            padding: 0 20px;
-        }
+        .container { max-width: 1160px; margin: 36px auto; padding: 0 28px; }
 
         /* Page header */
         .page-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 22px;
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 24px;
         }
-        .page-header h1 { font-size: 1.5rem; color: #0a4d68; }
-        .page-header p  { font-size: 0.88rem; color: #888; margin-top: 3px; }
+        .page-header h1 { font-size: 1.45rem; font-weight: 800; color: #0a2540; letter-spacing: -0.5px; }
+        .page-header p  { font-size: 0.84rem; color: #64748b; margin-top: 3px; }
 
         .btn-add {
-            background: linear-gradient(135deg, #0a4d68, #088395);
-            color: white;
-            text-decoration: none;
-            padding: 11px 22px;
-            border-radius: 10px;
-            font-size: 0.92rem;
-            font-weight: 600;
-            white-space: nowrap;
-            transition: opacity 0.2s;
+            display: inline-flex; align-items: center; gap: 7px;
+            background: linear-gradient(135deg, #0a4d68, #0bb8c4);
+            color: white; text-decoration: none;
+            padding: 11px 22px; border-radius: 11px;
+            font-size: 0.88rem; font-weight: 700;
+            box-shadow: 0 4px 14px rgba(8,131,149,0.35);
+            transition: opacity 0.2s, transform 0.15s;
         }
-        .btn-add:hover { opacity: 0.88; }
+        .btn-add:hover { opacity: 0.9; transform: translateY(-1px); }
 
-        /* Success alert */
+        /* Alerts */
         .alert-success {
-            background: #e8f8f0;
-            border: 1px solid #a3e4c0;
-            color: #1a7a4a;
-            padding: 12px 18px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-size: 0.9rem;
+            display: flex; align-items: center; gap: 10px;
+            background: #f0fdf4; border: 1.5px solid #86efac;
+            color: #166534; padding: 13px 18px; border-radius: 12px;
+            margin-bottom: 20px; font-size: 0.88rem; font-weight: 500;
         }
 
         /* Table card */
         .table-card {
-            background: white;
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.07);
-            overflow: hidden;
+            background: white; border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.07); overflow: hidden;
+            border: 1px solid #e2e8f0;
         }
 
-        table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-        thead {
-            background: linear-gradient(135deg, #0a4d68, #088395);
-            color: white;
-        }
+        table { width: 100%; border-collapse: collapse; }
+        thead { background: linear-gradient(135deg, #0a2540, #0a4d68); color: white; }
         thead th {
-            padding: 14px 16px;
-            text-align: left;
-            font-size: 0.82rem;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            padding: 14px 18px; text-align: left;
+            font-size: 0.72rem; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.9px;
         }
         thead th:last-child { text-align: center; }
-        tbody tr {
-            border-bottom: 1px solid #f0f4f8;
-            transition: background 0.15s;
-        }
-        tbody tr:hover { background: #f7fbfc; }
+        tbody tr { border-bottom: 1px solid #f1f5f9; transition: background 0.12s; }
+        tbody tr:hover { background: #f8fbff; }
         tbody tr:last-child { border-bottom: none; }
-        td {
-            padding: 13px 16px;
-            font-size: 0.9rem;
-            vertical-align: middle;
-        }
-        td.res-number { font-weight: 600; color: #088395; }
-        td.action-col { text-align: center; white-space: nowrap; min-width: 200px; }
+        td { padding: 14px 18px; font-size: 0.88rem; vertical-align: middle; color: #334155; }
+        td.res-number { font-weight: 700; color: #0a4d68; font-family: 'Inter', monospace; }
+        td.action-col { text-align: center; white-space: nowrap; min-width: 220px; }
 
-        /* ── Modern action button group ── */
-        .action-group {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
+        /* Action buttons */
+        .action-group { display: inline-flex; align-items: center; gap: 6px; }
         .action-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 6px 14px;
-            border-radius: 8px;
-            font-size: 0.78rem;
-            font-weight: 600;
-            letter-spacing: 0.2px;
-            text-decoration: none;
-            border: none;
-            cursor: pointer;
+            display: inline-flex; align-items: center; gap: 5px;
+            padding: 7px 14px; border-radius: 8px; font-size: 0.77rem; font-weight: 600;
+            font-family: 'Inter', sans-serif; letter-spacing: 0.2px;
+            text-decoration: none; border: none; cursor: pointer;
             transition: transform 0.15s, box-shadow 0.15s, filter 0.15s;
-            line-height: 1;
         }
-        .action-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            filter: brightness(1.06);
-        }
+        .action-btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.18); filter: brightness(1.06); }
         .action-btn:active { transform: translateY(0); box-shadow: none; }
-        .action-btn svg { flex-shrink: 0; }
+        .action-btn.view { background: linear-gradient(135deg,#0891b2,#06b6d4); color:#fff; }
+        .action-btn.edit { background: linear-gradient(135deg,#d97706,#f59e0b); color:#fff; }
+        .action-btn.del  { background: linear-gradient(135deg,#dc2626,#ef4444); color:#fff; }
 
-        /* View — teal */
-        .action-btn.view {
-            background: linear-gradient(135deg, #0891b2, #06b6d4);
-            color: #fff;
-        }
-        /* Edit — amber */
-        .action-btn.edit {
-            background: linear-gradient(135deg, #d97706, #f59e0b);
-            color: #fff;
-        }
-        /* Delete — red */
-        .action-btn.del {
-            background: linear-gradient(135deg, #dc2626, #ef4444);
-            color: #fff;
-        }
         .alert-danger {
-            background: #fdecea;
-            border: 1px solid #f5c6cb;
-            color: #c0392b;
-            padding: 12px 18px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            font-size: 0.9rem;
+            display: flex; align-items: center; gap: 10px;
+            background: #fef2f2; border: 1.5px solid #fca5a5;
+            color: #b91c1c; padding: 13px 18px; border-radius: 12px;
+            margin-bottom: 20px; font-size: 0.88rem; font-weight: 500;
         }
 
-        /* Status badge */
+        /* Badges */
         .badge {
-            display: inline-block;
-            padding: 3px 10px;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            text-transform: uppercase;
+            display: inline-block; padding: 4px 11px; border-radius: 20px;
+            font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
         }
-        .badge-pending    { background: #fff8e1; color: #f39c12; }
-        .badge-confirmed  { background: #e8f8f0; color: #1a7a4a; }
-        .badge-cancelled  { background: #fdecea; color: #c0392b; }
-        .badge-checked_out { background: #e8eaf6; color: #3949ab; }
+        .badge-pending    { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
+        .badge-confirmed  { background: #f0fdf4; color: #166534; border: 1px solid #86efac; }
+        .badge-cancelled  { background: #fef2f2; color: #991b1b; border: 1px solid #fca5a5; }
+        .badge-checked_out { background: #eff6ff; color: #1d4ed8; border: 1px solid #93c5fd; }
 
         /* Empty state */
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #aaa;
-        }
+        .empty-state { text-align: center; padding: 64px 20px; color: #94a3b8; }
         .empty-state .icon { font-size: 3.5rem; margin-bottom: 14px; }
-        .empty-state h3 { font-size: 1.1rem; color: #888; margin-bottom: 8px; }
-        .empty-state p  { font-size: 0.88rem; }
+        .empty-state h3 { font-size: 1.05rem; color: #64748b; margin-bottom: 8px; font-weight: 600; }
+        .empty-state p  { font-size: 0.85rem; }
     </style>
 </head>
 <body>
 
 <!-- Navbar -->
 <nav class="navbar">
-    <div class="brand">&#127754; Ocean View Resort</div>
+    <div class="navbar-left">
+        <div class="nav-logo">&#127754;</div>
+        <span class="nav-brand">Ocean View Resort</span>
+    </div>
     <div class="navbar-links">
         <a href="<%= request.getContextPath() %>/dashboard">Dashboard</a>
-        <a href="<%= request.getContextPath() %>/reservations">Reservations</a>
+        <a href="<%= request.getContextPath() %>/reservations" class="active">Reservations</a>
+        <a href="<%= request.getContextPath() %>/rooms">Rooms</a>
+        <a href="<%= request.getContextPath() %>/guests">Guests</a>
+        <a href="<%= request.getContextPath() %>/payments">Payments</a>
+        <a href="<%= request.getContextPath() %>/reports">Reports</a>
         <a href="<%= request.getContextPath() %>/help">Help</a>
         <a href="<%= request.getContextPath() %>/logout" class="btn-logout">Logout</a>
         <a href="javascript:void(0)"
            onclick="if(confirm('Exit the system? Your session will end.')) location.href='<%= request.getContextPath() %>/exit'"
-           style="background:rgba(220,53,69,0.25);color:white;border:1px solid rgba(220,53,69,0.6);
-                  padding:7px 16px;border-radius:8px;cursor:pointer;font-size:0.85rem;
-                  font-weight:600;text-decoration:none;">
-            &#x23FB; Exit System
-        </a>
+           class="btn-exit">&#x23FB; Exit</a>
     </div>
 </nav>
 

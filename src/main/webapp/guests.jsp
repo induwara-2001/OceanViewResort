@@ -18,25 +18,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Guests - Ocean View Resort</title>
+    <title>Guests — Ocean View Resort</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f4f8; color: #333; }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', 'Segoe UI', sans-serif; background: #f1f5f9; color: #1e293b; }
 
         /* ── Navbar ── */
         .navbar {
-            background: linear-gradient(135deg, #0a4d68, #088395);
-            color: white; padding: 0 30px; height: 65px;
+            background: linear-gradient(135deg, #0a2540 0%, #0a4d68 60%, #088395 100%);
+            height: 68px; padding: 0 36px;
             display: flex; align-items: center; justify-content: space-between;
-            box-shadow: 0 3px 12px rgba(0,0,0,0.2);
+            position: sticky; top: 0; z-index: 200;
+            box-shadow: 0 2px 20px rgba(10,37,64,0.4);
         }
-        .navbar .brand { font-size: 1.3rem; font-weight: 700; }
-        .navbar-links  { display: flex; align-items: center; gap: 20px; }
-        .navbar-links a { color: rgba(255,255,255,0.85); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
-        .navbar-links a:hover { color: white; }
-        .btn-logout { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.4); padding: 7px 16px; border-radius: 8px; }
-        .btn-exit   { background: rgba(220,53,69,0.25);  border: 1px solid rgba(220,53,69,0.55); padding: 7px 16px; border-radius: 8px; font-weight: 600; }
-        .btn-exit:hover { background: rgba(220,53,69,0.45) !important; }
+        .navbar-left { display: flex; align-items: center; gap: 14px; }
+        .nav-logo {
+            width: 36px; height: 36px; border-radius: 9px;
+            background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25);
+            display: flex; align-items: center; justify-content: center; font-size: 1.2rem;
+        }
+        .nav-brand { color: white; font-size: 1rem; font-weight: 700; letter-spacing: -0.3px; }
+        .navbar-links { display: flex; align-items: center; gap: 4px; }
+        .navbar-links a {
+            color: rgba(255,255,255,0.75); text-decoration: none;
+            font-size: 0.84rem; font-weight: 500; padding: 6px 12px; border-radius: 8px;
+            transition: background 0.15s, color 0.15s;
+        }
+        .navbar-links a:hover { color: white; background: rgba(255,255,255,0.1); }
+        .navbar-links a.active { color: white; background: rgba(255,255,255,0.15); font-weight: 600; }
+        .btn-logout {
+            color: white; text-decoration: none;
+            background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.25);
+            font-size: 0.82rem; font-weight: 600; padding: 7px 16px; border-radius: 8px;
+        }
+        .btn-logout:hover { background: rgba(255,255,255,0.22); }
 
         /* ── Layout ── */
         .container { max-width: 1150px; margin: 36px auto; padding: 0 24px; }
@@ -140,15 +158,19 @@
 <body>
 
 <nav class="navbar">
-    <div class="brand">&#127754; Ocean View Resort</div>
+    <div class="navbar-left">
+        <div class="nav-logo">&#127754;</div>
+        <span class="nav-brand">Ocean View Resort</span>
+    </div>
     <div class="navbar-links">
         <a href="<%= request.getContextPath() %>/dashboard">Dashboard</a>
         <a href="<%= request.getContextPath() %>/reservations">Reservations</a>
+        <a href="<%= request.getContextPath() %>/rooms">Rooms</a>
+        <a href="<%= request.getContextPath() %>/guests" class="active">Guests</a>
+        <a href="<%= request.getContextPath() %>/payments">Payments</a>
+        <a href="<%= request.getContextPath() %>/reports">Reports</a>
         <a href="<%= request.getContextPath() %>/help">Help</a>
         <a href="<%= request.getContextPath() %>/logout" class="btn-logout">Logout</a>
-        <a href="javascript:void(0)"
-           onclick="if(confirm('Exit the system? Your session will end.')) location.href='<%= request.getContextPath() %>/exit'"
-           class="btn-exit">&#x23FB; Exit System</a>
     </div>
 </nav>
 
