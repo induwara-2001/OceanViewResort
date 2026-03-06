@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Handles /reservations (list), /reservations/add (form+save), /reservations/view (details).
  */
-@WebServlet(name = "ReservationServlet", urlPatterns = {"/reservations", "/reservations/add", "/reservations/view"})
+@WebServlet(name = "ReservationServlet", urlPatterns = {"/reservations", "/reservations/add", "/reservations/view", "/reservations/delete"})
 public class ReservationServlet extends HttpServlet {
 
     private ReservationService reservationService;
@@ -79,6 +79,21 @@ public class ReservationServlet extends HttpServlet {
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("loggedUser") == null) {
             response.sendRedirect(request.getContextPath() + "/login");
+            return;
+        }
+
+        String path = request.getServletPath();
+
+        if ("/reservations/delete".equals(path)) {
+            // Handle delete
+            String idParam = request.getParameter("id");
+            if (idParam != null && !idParam.isEmpty()) {
+                try {
+                    int id = Integer.parseInt(idParam);
+                    reservationService.deleteReservation(id);
+                } catch (NumberFormatException ignored) {}
+            }
+            response.sendRedirect(request.getContextPath() + "/reservations?deleted=1");
             return;
         }
 

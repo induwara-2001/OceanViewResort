@@ -10,6 +10,7 @@
     }
     List<Reservation> reservations = (List<Reservation>) request.getAttribute("reservations");
     String success = request.getParameter("success");
+    String deleted = request.getParameter("deleted");
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -142,6 +143,28 @@
             transition: background 0.2s;
         }
         .btn-view:hover { background: #b2ebf2; }
+        .btn-delete {
+            background: #fdecea;
+            color: #c0392b;
+            border: 1px solid #f5c6cb;
+            padding: 5px 14px;
+            border-radius: 7px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+            margin-left: 6px;
+        }
+        .btn-delete:hover { background: #f5c6cb; }
+        .alert-danger {
+            background: #fdecea;
+            border: 1px solid #f5c6cb;
+            color: #c0392b;
+            padding: 12px 18px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+        }
 
         /* Status badge */
         .badge {
@@ -204,6 +227,11 @@
         &#10003; Reservation saved successfully!
     </div>
     <% } %>
+    <% if ("1".equals(deleted)) { %>
+    <div class="alert-danger">
+        &#128465; Reservation deleted successfully.
+    </div>
+    <% } %>
 
     <div class="table-card">
         <% if (reservations == null || reservations.isEmpty()) { %>
@@ -223,7 +251,7 @@
                     <th>Check-In</th>
                     <th>Check-Out</th>
                     <th>Status</th>
-                    <th>Action</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
@@ -247,6 +275,13 @@
                     </td>
                     <td class="action-col">
                         <a href="<%= request.getContextPath() %>/reservations/view?id=<%= r.getId() %>" class="btn-view">View</a>
+                        <form method="post" action="<%= request.getContextPath() %>/reservations/delete" style="display:inline;">
+                            <input type="hidden" name="id" value="<%= r.getId() %>">
+                            <button type="button" class="btn-delete"
+                                onclick="confirmDelete(this, '<%= r.getReservationNumber() %>', '<%= r.getGuestName().replace("'", "\\'" ) %>')">
+                                &#128465; Delete
+                            </button>
+                        </form>
                     </td>
                 </tr>
                 <% } %>
@@ -257,5 +292,12 @@
 
 </div>
 
+<script>
+function confirmDelete(btn, resNum, guestName) {
+    if (confirm('Delete reservation ' + resNum + ' for ' + guestName + '?\nThis action cannot be undone.')) {
+        btn.closest('form').submit();
+    }
+}
+</script>
 </body>
 </html>

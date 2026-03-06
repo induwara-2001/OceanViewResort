@@ -24,4 +24,7 @@ public interface ReservationService {
 
     /** Finds a reservation by its ID. */
     Reservation getReservationById(int id);
+
+    /** Delete a reservation by ID. Returns true on success. */
+    boolean deleteReservation(int id);
 }

@@ -102,6 +102,17 @@ public class ReservationDAOImpl implements ReservationDAO {
         return 0;
     }
 
+    @Override
+    public boolean deleteById(int id) {
+        String sql = "DELETE FROM reservations WHERE id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException("Error deleting reservation.", e);
+        }
+    }
+
     // ---- Helper ----
 
     private Reservation mapRow(ResultSet rs) throws SQLException {

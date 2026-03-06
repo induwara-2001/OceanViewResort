@@ -23,4 +23,7 @@ public interface ReservationDAO {
 
     /** Get the count of reservations to help generate reservation numbers. */
     int count();
+
+    /** Delete a reservation by its ID. Returns true if a row was deleted. */
+    boolean deleteById(int id);
 }

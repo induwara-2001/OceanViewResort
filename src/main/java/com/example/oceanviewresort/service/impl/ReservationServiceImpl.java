@@ -76,6 +76,11 @@ public class ReservationServiceImpl implements ReservationService {
         return reservationDAO.findById(id);
     }
 
+    @Override
+    public boolean deleteReservation(int id) {
+        return reservationDAO.deleteById(id);
+    }
+
     // ---- Helper ----
 
     private String generateReservationNumber() {
