@@ -26,4 +26,7 @@ public interface ReservationDAO {
 
     /** Delete a reservation by its ID. Returns true if a row was deleted. */
     boolean deleteById(int id);
+
+    /** Update an existing reservation record. Returns true if a row was updated. */
+    boolean update(Reservation reservation);
 }

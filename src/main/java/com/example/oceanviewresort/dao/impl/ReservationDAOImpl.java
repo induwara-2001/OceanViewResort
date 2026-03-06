@@ -103,6 +103,26 @@ public class ReservationDAOImpl implements ReservationDAO {
     }
 
     @Override
+    public boolean update(Reservation r) {
+        String sql = "UPDATE reservations SET guest_name=?, address=?, contact_number=?, guest_email=?, " +
+                     "room_type=?, check_in_date=?, check_out_date=?, status=? WHERE id=?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, r.getGuestName());
+            ps.setString(2, r.getAddress());
+            ps.setString(3, r.getContactNumber());
+            ps.setString(4, r.getGuestEmail());
+            ps.setString(5, r.getRoomType());
+            ps.setDate(6, r.getCheckInDate());
+            ps.setDate(7, r.getCheckOutDate());
+            ps.setString(8, r.getStatus());
+            ps.setInt(9, r.getId());
+            return ps.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException("Error updating reservation.", e);
+        }
+    }
+
+    @Override
     public boolean deleteById(int id) {
         String sql = "DELETE FROM reservations WHERE id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {

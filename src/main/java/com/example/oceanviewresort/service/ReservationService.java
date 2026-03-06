@@ -27,4 +27,9 @@ public interface ReservationService {
 
     /** Delete a reservation by ID. Returns true on success. */
     boolean deleteReservation(int id);
+
+    /** Update an existing reservation. Returns true on success. */
+    boolean updateReservation(int id, String guestName, String address, String contactNumber,
+                              String guestEmail, String roomType,
+                              String checkInDate, String checkOutDate, String status);
 }

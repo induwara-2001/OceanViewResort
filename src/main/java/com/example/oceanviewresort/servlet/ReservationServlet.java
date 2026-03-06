@@ -16,7 +16,7 @@ import java.util.List;
 /**
  * Handles /reservations (list), /reservations/add (form+save), /reservations/view (details).
  */
-@WebServlet(name = "ReservationServlet", urlPatterns = {"/reservations", "/reservations/add", "/reservations/view", "/reservations/delete"})
+@WebServlet(name = "ReservationServlet", urlPatterns = {"/reservations", "/reservations/add", "/reservations/view", "/reservations/edit", "/reservations/delete"})
 public class ReservationServlet extends HttpServlet {
 
     private ReservationService reservationService;
@@ -63,6 +63,26 @@ public class ReservationServlet extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/reservations");
             }
 
+        } else if ("/reservations/edit".equals(path)) {
+            // Show edit form pre-filled with current data
+            String idParam = request.getParameter("id");
+            if (idParam == null || idParam.isEmpty()) {
+                response.sendRedirect(request.getContextPath() + "/reservations");
+                return;
+            }
+            try {
+                int id = Integer.parseInt(idParam);
+                Reservation reservation = reservationService.getReservationById(id);
+                if (reservation == null) {
+                    response.sendRedirect(request.getContextPath() + "/reservations?notfound=1");
+                    return;
+                }
+                request.setAttribute("reservation", reservation);
+                request.getRequestDispatcher("/edit-reservation.jsp").forward(request, response);
+            } catch (NumberFormatException e) {
+                response.sendRedirect(request.getContextPath() + "/reservations");
+            }
+
         } else {
             // Show the reservations list
             List<Reservation> reservations = reservationService.getAllReservations();
@@ -94,6 +114,43 @@ public class ReservationServlet extends HttpServlet {
                 } catch (NumberFormatException ignored) {}
             }
             response.sendRedirect(request.getContextPath() + "/reservations?deleted=1");
+            return;
+        }
+
+        if ("/reservations/edit".equals(path)) {
+            // Handle edit submit
+            String idParam   = request.getParameter("id");
+            String guestName2 = request.getParameter("guestName");
+            String address2   = request.getParameter("address");
+            String contact2   = request.getParameter("contactNumber");
+            String email2     = request.getParameter("guestEmail");
+            String roomType2  = request.getParameter("roomType");
+            String checkIn2   = request.getParameter("checkInDate");
+            String checkOut2  = request.getParameter("checkOutDate");
+            String status2    = request.getParameter("status");
+            try {
+                int id = Integer.parseInt(idParam);
+                boolean ok = reservationService.updateReservation(
+                        id, guestName2, address2, contact2, email2, roomType2, checkIn2, checkOut2, status2);
+                if (ok) {
+                    response.sendRedirect(request.getContextPath() + "/reservations?updated=1");
+                } else {
+                    Reservation existing = reservationService.getReservationById(id);
+                    request.setAttribute("reservation", existing);
+                    request.setAttribute("errorMessage", "Failed to update. Please check all fields and ensure check-out is after check-in.");
+                    request.setAttribute("formGuestName",     guestName2);
+                    request.setAttribute("formAddress",       address2);
+                    request.setAttribute("formContactNumber", contact2);
+                    request.setAttribute("formGuestEmail",    email2);
+                    request.setAttribute("formRoomType",      roomType2);
+                    request.setAttribute("formCheckInDate",   checkIn2);
+                    request.setAttribute("formCheckOutDate",  checkOut2);
+                    request.setAttribute("formStatus",        status2);
+                    request.getRequestDispatcher("/edit-reservation.jsp").forward(request, response);
+                }
+            } catch (NumberFormatException e) {
+                response.sendRedirect(request.getContextPath() + "/reservations");
+            }
             return;
         }
 

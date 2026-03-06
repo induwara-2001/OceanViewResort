@@ -11,6 +11,7 @@
     List<Reservation> reservations = (List<Reservation>) request.getAttribute("reservations");
     String success = request.getParameter("success");
     String deleted = request.getParameter("deleted");
+    String updated = request.getParameter("updated");
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -130,32 +131,52 @@
             vertical-align: middle;
         }
         td.res-number { font-weight: 600; color: #088395; }
-        td.action-col { text-align: center; }
-        .btn-view {
-            background: #e0f7fa;
-            color: #0a4d68;
-            border: 1px solid #b2ebf2;
-            padding: 5px 14px;
-            border-radius: 7px;
-            font-size: 0.8rem;
+        td.action-col { text-align: center; white-space: nowrap; min-width: 200px; }
+
+        /* ── Modern action button group ── */
+        .action-group {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-size: 0.78rem;
             font-weight: 600;
+            letter-spacing: 0.2px;
             text-decoration: none;
-            transition: background 0.2s;
-        }
-        .btn-view:hover { background: #b2ebf2; }
-        .btn-delete {
-            background: #fdecea;
-            color: #c0392b;
-            border: 1px solid #f5c6cb;
-            padding: 5px 14px;
-            border-radius: 7px;
-            font-size: 0.8rem;
-            font-weight: 600;
+            border: none;
             cursor: pointer;
-            transition: background 0.2s;
-            margin-left: 6px;
+            transition: transform 0.15s, box-shadow 0.15s, filter 0.15s;
+            line-height: 1;
         }
-        .btn-delete:hover { background: #f5c6cb; }
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            filter: brightness(1.06);
+        }
+        .action-btn:active { transform: translateY(0); box-shadow: none; }
+        .action-btn svg { flex-shrink: 0; }
+
+        /* View — teal */
+        .action-btn.view {
+            background: linear-gradient(135deg, #0891b2, #06b6d4);
+            color: #fff;
+        }
+        /* Edit — amber */
+        .action-btn.edit {
+            background: linear-gradient(135deg, #d97706, #f59e0b);
+            color: #fff;
+        }
+        /* Delete — red */
+        .action-btn.del {
+            background: linear-gradient(135deg, #dc2626, #ef4444);
+            color: #fff;
+        }
         .alert-danger {
             background: #fdecea;
             border: 1px solid #f5c6cb;
@@ -232,6 +253,11 @@
         &#128465; Reservation deleted successfully.
     </div>
     <% } %>
+    <% if ("1".equals(updated)) { %>
+    <div class="alert-success">
+        &#10003; Reservation updated successfully!
+    </div>
+    <% } %>
 
     <div class="table-card">
         <% if (reservations == null || reservations.isEmpty()) { %>
@@ -274,14 +300,24 @@
                         <span class="badge <%= badgeClass %>"><%= status %></span>
                     </td>
                     <td class="action-col">
-                        <a href="<%= request.getContextPath() %>/reservations/view?id=<%= r.getId() %>" class="btn-view">View</a>
-                        <form method="post" action="<%= request.getContextPath() %>/reservations/delete" style="display:inline;">
-                            <input type="hidden" name="id" value="<%= r.getId() %>">
-                            <button type="button" class="btn-delete"
-                                onclick="confirmDelete(this, '<%= r.getReservationNumber() %>', '<%= r.getGuestName().replace("'", "\\'" ) %>')">
-                                &#128465; Delete
-                            </button>
-                        </form>
+                        <div class="action-group">
+                            <a href="<%= request.getContextPath() %>/reservations/view?id=<%= r.getId() %>" class="action-btn view">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                                View
+                            </a>
+                            <a href="<%= request.getContextPath() %>/reservations/edit?id=<%= r.getId() %>" class="action-btn edit">
+                                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                                Edit
+                            </a>
+                            <form method="post" action="<%= request.getContextPath() %>/reservations/delete" style="display:contents;">
+                                <input type="hidden" name="id" value="<%= r.getId() %>">
+                                <button type="button" class="action-btn del"
+                                    onclick="confirmDelete(this, '<%= r.getReservationNumber() %>', '<%= r.getGuestName().replace("'", "\\'" ) %>')">
+                                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+                                    Delete
+                                </button>
+                            </form>
+                        </div>
                     </td>
                 </tr>
                 <% } %>

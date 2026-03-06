@@ -81,6 +81,34 @@ public class ReservationServiceImpl implements ReservationService {
         return reservationDAO.deleteById(id);
     }
 
+    @Override
+    public boolean updateReservation(int id, String guestName, String address, String contactNumber,
+                                     String guestEmail, String roomType,
+                                     String checkInDate, String checkOutDate, String status) {
+        if (guestName == null || guestName.trim().isEmpty()) return false;
+        if (contactNumber == null || contactNumber.trim().isEmpty()) return false;
+        if (roomType == null || roomType.trim().isEmpty()) return false;
+        if (checkInDate == null || checkOutDate == null) return false;
+
+        java.sql.Date checkIn  = java.sql.Date.valueOf(checkInDate);
+        java.sql.Date checkOut = java.sql.Date.valueOf(checkOutDate);
+        if (!checkOut.after(checkIn)) return false;
+
+        Reservation existing = reservationDAO.findById(id);
+        if (existing == null) return false;
+
+        existing.setGuestName(guestName.trim());
+        existing.setAddress(address != null ? address.trim() : "");
+        existing.setContactNumber(contactNumber.trim());
+        existing.setGuestEmail(guestEmail != null ? guestEmail.trim() : "");
+        existing.setRoomType(roomType.trim());
+        existing.setCheckInDate(checkIn);
+        existing.setCheckOutDate(checkOut);
+        existing.setStatus(status != null && !status.trim().isEmpty() ? status.trim() : "PENDING");
+
+        return reservationDAO.update(existing);
+    }
+
     // ---- Helper ----
 
     private String generateReservationNumber() {
