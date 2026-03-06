@@ -48,6 +48,36 @@ public class GuestDAOImpl implements GuestDAO {
     }
 
     @Override
+    public Guest findByContact(String contactNumber) {
+        String sql = "SELECT contact_number, guest_name, address, " +
+                     "COUNT(*) AS total_reservations, " +
+                     "MAX(check_in_date) AS last_visit, " +
+                     "SUBSTRING_INDEX(GROUP_CONCAT(room_type ORDER BY check_in_date DESC), ',', 1) AS last_room_type, " +
+                     "SUBSTRING_INDEX(GROUP_CONCAT(status ORDER BY check_in_date DESC), ',', 1) AS last_status " +
+                     "FROM reservations WHERE contact_number = ? " +
+                     "GROUP BY contact_number, guest_name, address";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, contactNumber);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Guest g = new Guest();
+                    g.setContactNumber(rs.getString("contact_number"));
+                    g.setGuestName(rs.getString("guest_name"));
+                    g.setAddress(rs.getString("address"));
+                    g.setTotalReservations(rs.getInt("total_reservations"));
+                    g.setLastVisit(rs.getDate("last_visit"));
+                    g.setLastRoomType(rs.getString("last_room_type"));
+                    g.setLastStatus(rs.getString("last_status"));
+                    return g;
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error fetching guest by contact.", e);
+        }
+        return null;
+    }
+
+    @Override
     public int countUniqueGuests() {
         String sql = "SELECT COUNT(DISTINCT contact_number) FROM reservations";
         try (PreparedStatement ps = connection.prepareStatement(sql);

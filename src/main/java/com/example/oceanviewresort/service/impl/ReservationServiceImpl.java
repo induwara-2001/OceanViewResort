@@ -77,6 +77,11 @@ public class ReservationServiceImpl implements ReservationService {
     }
 
     @Override
+    public List<Reservation> getReservationsByContact(String contactNumber) {
+        return reservationDAO.findByContactNumber(contactNumber);
+    }
+
+    @Override
     public boolean deleteReservation(int id) {
         return reservationDAO.deleteById(id);
     }

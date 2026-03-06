@@ -10,6 +10,8 @@
     }
     List<Guest> guests  = (List<Guest>) request.getAttribute("guests");
     int totalGuests     = request.getAttribute("totalGuests") != null ? (int) request.getAttribute("totalGuests") : 0;
+    int totalBookings   = 0;
+    if (guests != null) for (Guest g : guests) totalBookings += g.getTotalReservations();
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -21,6 +23,7 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f0f4f8; color: #333; }
 
+        /* ── Navbar ── */
         .navbar {
             background: linear-gradient(135deg, #0a4d68, #088395);
             color: white; padding: 0 30px; height: 65px;
@@ -28,61 +31,110 @@
             box-shadow: 0 3px 12px rgba(0,0,0,0.2);
         }
         .navbar .brand { font-size: 1.3rem; font-weight: 700; }
-        .navbar-links { display: flex; align-items: center; gap: 20px; }
-        .navbar-links a { color: rgba(255,255,255,0.85); text-decoration: none; font-size: 0.9rem; }
+        .navbar-links  { display: flex; align-items: center; gap: 20px; }
+        .navbar-links a { color: rgba(255,255,255,0.85); text-decoration: none; font-size: 0.9rem; transition: color 0.2s; }
         .navbar-links a:hover { color: white; }
-        .btn-logout { background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.5); padding: 7px 16px; border-radius: 8px; text-decoration: none; font-size: 0.85rem; }
-        .btn-exit   { background: rgba(220,53,69,0.25); color: white; border: 1px solid rgba(220,53,69,0.6); padding: 7px 16px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; text-decoration: none; }
-        .btn-exit:hover { background: rgba(220,53,69,0.5); }
+        .btn-logout { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.4); padding: 7px 16px; border-radius: 8px; }
+        .btn-exit   { background: rgba(220,53,69,0.25);  border: 1px solid rgba(220,53,69,0.55); padding: 7px 16px; border-radius: 8px; font-weight: 600; }
+        .btn-exit:hover { background: rgba(220,53,69,0.45) !important; }
 
-        .container { max-width: 1100px; margin: 35px auto; padding: 0 20px; }
-        .page-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 22px; }
-        .page-header h1 { font-size: 1.5rem; color: #0a4d68; }
-        .page-header p  { font-size: 0.88rem; color: #888; margin-top: 3px; }
+        /* ── Layout ── */
+        .container { max-width: 1150px; margin: 36px auto; padding: 0 24px; }
 
-        /* Search bar */
-        .search-bar { margin-bottom: 20px; }
-        .search-bar input {
-            width: 100%; padding: 11px 16px; border: 1px solid #dde2ea;
-            border-radius: 10px; font-size: 0.93rem; outline: none;
-            background: white; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        /* ── Page title ── */
+        .page-title { margin-bottom: 24px; }
+        .page-title h1 { font-size: 1.55rem; font-weight: 700; color: #0a4d68; display: flex; align-items: center; gap: 10px; }
+        .page-title p  { font-size: 0.87rem; color: #9aacba; margin-top: 4px; }
+
+        /* ── KPI strip ── */
+        .kpi-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 26px; }
+        .kpi-card {
+            background: white; border-radius: 16px;
+            padding: 20px 24px; box-shadow: 0 2px 14px rgba(0,0,0,0.06);
+            display: flex; align-items: center; gap: 16px;
         }
-        .search-bar input:focus { border-color: #088395; }
-
-        /* Summary */
-        .summary-strip { display: flex; gap: 16px; margin-bottom: 24px; }
-        .summary-card {
-            flex: 1; background: white; border-radius: 14px;
-            padding: 18px 20px; box-shadow: 0 4px 16px rgba(0,0,0,0.07); text-align: center;
+        .kpi-icon {
+            width: 50px; height: 50px; border-radius: 14px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem; flex-shrink: 0;
         }
-        .summary-card .sc-num   { font-size: 2rem; font-weight: 700; color: #088395; margin-bottom: 4px; }
-        .summary-card .sc-label { font-size: 0.8rem; color: #999; text-transform: uppercase; }
+        .kpi-icon.blue   { background: linear-gradient(135deg,#0891b2,#06b6d4); }
+        .kpi-icon.green  { background: linear-gradient(135deg,#059669,#10b981); }
+        .kpi-icon.purple { background: linear-gradient(135deg,#7c3aed,#a78bfa); }
+        .kpi-text .num   { font-size: 1.8rem; font-weight: 800; color: #0a4d68; line-height: 1; }
+        .kpi-text .lbl   { font-size: 0.78rem; color: #9aacba; text-transform: uppercase; letter-spacing: 0.6px; margin-top: 3px; }
 
-        .table-card { background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,0.07); overflow: hidden; }
+        /* ── Toolbar ── */
+        .toolbar { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; }
+        .search-wrap { flex: 1; position: relative; }
+        .search-wrap svg { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: #9aacba; pointer-events: none; }
+        .search-wrap input {
+            width: 100%; padding: 11px 16px 11px 42px;
+            border: 1.5px solid #dde4ea; border-radius: 12px;
+            font-size: 0.9rem; background: white; outline: none;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .search-wrap input:focus { border-color: #088395; box-shadow: 0 0 0 3px rgba(8,131,149,0.12); }
+        .count-badge {
+            background: linear-gradient(135deg, #0a4d68, #088395);
+            color: white; padding: 10px 20px; border-radius: 12px;
+            font-size: 0.83rem; font-weight: 600; white-space: nowrap;
+        }
+
+        /* ── Table card ── */
+        .table-card { background: white; border-radius: 18px; box-shadow: 0 4px 22px rgba(0,0,0,0.07); overflow: hidden; }
         table { width: 100%; border-collapse: collapse; }
         thead { background: linear-gradient(135deg, #0a4d68, #088395); color: white; }
-        thead th { padding: 14px 16px; text-align: left; font-size: 0.82rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
-        tbody tr { border-bottom: 1px solid #f0f4f8; transition: background 0.15s; }
+        thead th { padding: 14px 18px; text-align: left; font-size: 0.78rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.7px; }
+        thead th:last-child { text-align: center; }
+        tbody tr { border-bottom: 1px solid #f2f6fa; transition: background 0.14s; }
         tbody tr:last-child { border-bottom: none; }
-        tbody tr:hover { background: #f7fbfc; }
-        td { padding: 13px 16px; font-size: 0.9rem; vertical-align: middle; }
+        tbody tr:hover { background: #f6fbfc; }
+        td { padding: 14px 18px; font-size: 0.9rem; vertical-align: middle; }
 
-        .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; }
-        .badge-confirmed { background: #e6f9ef; color: #1a7a4a; }
-        .badge-pending   { background: #fff8e1; color: #856404; }
-        .badge-cancelled { background: #fde8e8; color: #c0392b; }
-        .badge-checked-out { background: #e8f0ff; color: #3b4fd4; }
-
-        .empty-state { text-align: center; padding: 50px; color: #bbb; font-size: 0.95rem; }
-
-        .avatar {
-            width: 38px; height: 38px; border-radius: 50%;
-            background: linear-gradient(135deg, #0a4d68, #088395);
+        /* Avatar */
+        .avatar-circle {
+            width: 40px; height: 40px; border-radius: 50%;
+            background: linear-gradient(135deg, #0891b2, #06b6d4);
             color: white; font-size: 1rem; font-weight: 700;
             display: inline-flex; align-items: center; justify-content: center;
-            margin-right: 10px; vertical-align: middle;
+            flex-shrink: 0; box-shadow: 0 2px 8px rgba(8,131,149,0.25);
         }
-        .guest-name { display: flex; align-items: center; }
+        .guest-cell { display: flex; align-items: center; gap: 12px; }
+        .guest-cell .gname { font-weight: 600; color: #1a2e3b; font-size: 0.92rem; }
+
+        /* Booking count pill */
+        .bookings-pill {
+            display: inline-flex; align-items: center; justify-content: center;
+            width: 32px; height: 32px; border-radius: 50%;
+            background: #e0f7fa; color: #0a4d68;
+            font-weight: 700; font-size: 0.88rem;
+        }
+
+        /* Status badge */
+        .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.73rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
+        .badge-confirmed   { background: #dcfce7; color: #15803d; }
+        .badge-pending     { background: #fef9c3; color: #854d0e; }
+        .badge-cancelled   { background: #fee2e2; color: #b91c1c; }
+        .badge-checked_out { background: #ede9fe; color: #6d28d9; }
+
+        /* View Profile button */
+        .btn-profile {
+            display: inline-flex; align-items: center; gap: 6px;
+            background: linear-gradient(135deg, #0891b2, #06b6d4);
+            color: white; border: none; padding: 7px 16px;
+            border-radius: 8px; font-size: 0.78rem; font-weight: 600;
+            text-decoration: none; cursor: pointer; letter-spacing: 0.2px;
+            transition: transform 0.15s, box-shadow 0.15s, filter 0.15s;
+        }
+        .btn-profile:hover { transform: translateY(-2px); box-shadow: 0 4px 14px rgba(8,131,149,0.35); filter: brightness(1.06); }
+        .btn-profile:active { transform: translateY(0); box-shadow: none; }
+
+        /* Empty state */
+        .empty-state { text-align: center; padding: 64px 20px; color: #bbb; }
+        .empty-state .icon { font-size: 3.5rem; margin-bottom: 14px; }
+        .empty-state h3 { font-size: 1.05rem; color: #999; margin-bottom: 6px; }
     </style>
 </head>
 <body>
@@ -94,82 +146,132 @@
         <a href="<%= request.getContextPath() %>/reservations">Reservations</a>
         <a href="<%= request.getContextPath() %>/help">Help</a>
         <a href="<%= request.getContextPath() %>/logout" class="btn-logout">Logout</a>
-        <a href="<%= request.getContextPath() %>/exit" onclick="return confirm('Exit and end your session?')" class="btn-exit">&#x23FB; Exit System</a>
+        <a href="javascript:void(0)"
+           onclick="if(confirm('Exit the system? Your session will end.')) location.href='<%= request.getContextPath() %>/exit'"
+           class="btn-exit">&#x23FB; Exit System</a>
     </div>
 </nav>
 
 <div class="container">
 
-    <div class="page-header">
-        <div>
-            <h1>&#128101; Guest Records</h1>
-            <p>Unique guests derived from booking history</p>
+    <!-- Title -->
+    <div class="page-title">
+        <h1>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#0a4d68" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            Guest Records
+        </h1>
+        <p>Unique guest profiles derived from reservation history</p>
+    </div>
+
+    <!-- KPI strip -->
+    <div class="kpi-strip">
+        <div class="kpi-card">
+            <div class="kpi-icon blue">&#128101;</div>
+            <div class="kpi-text">
+                <div class="num"><%= totalGuests %></div>
+                <div class="lbl">Unique Guests</div>
+            </div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon green">&#128203;</div>
+            <div class="kpi-text">
+                <div class="num"><%= totalBookings %></div>
+                <div class="lbl">Total Bookings</div>
+            </div>
+        </div>
+        <div class="kpi-card">
+            <div class="kpi-icon purple">&#11088;</div>
+            <div class="kpi-text">
+                <div class="num"><%= totalGuests > 0 ? String.format("%.1f", (double) totalBookings / totalGuests) : "0.0" %></div>
+                <div class="lbl">Avg Stays / Guest</div>
+            </div>
         </div>
     </div>
 
-    <!-- Summary -->
-    <div class="summary-strip">
-        <div class="summary-card">
-            <div class="sc-num"><%= totalGuests %></div>
-            <div class="sc-label">Unique Guests</div>
+    <!-- Toolbar -->
+    <div class="toolbar">
+        <div class="search-wrap">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="searchInput" placeholder="Search by guest name or contact number..." onkeyup="filterTable()">
         </div>
-        <div class="summary-card">
-            <div class="sc-num"><%= guests != null ? guests.stream().mapToInt(com.example.oceanviewresort.model.Guest::getTotalReservations).sum() : 0 %></div>
-            <div class="sc-label">Total Bookings</div>
+        <div class="count-badge">
+            <span id="visibleCount"><%= guests != null ? guests.size() : 0 %></span> guests
         </div>
-    </div>
-
-    <!-- Search -->
-    <div class="search-bar">
-        <input type="text" id="searchInput" placeholder="&#128269;  Search by guest name or contact number..." onkeyup="filterTable()">
     </div>
 
     <!-- Table -->
     <div class="table-card">
         <% if (guests == null || guests.isEmpty()) { %>
         <div class="empty-state">
-            <p style="font-size:2.5rem;margin-bottom:12px;">&#128101;</p>
-            <p>No guests found. Guest records are built from reservations.</p>
+            <div class="icon">&#128101;</div>
+            <h3>No guests yet</h3>
+            <p>Guest profiles are automatically created from reservations.</p>
         </div>
         <% } else { %>
         <table id="guestTable">
             <thead>
                 <tr>
                     <th>#</th>
-                    <th>Guest Name</th>
+                    <th>Guest</th>
                     <th>Contact</th>
                     <th>Address</th>
-                    <th>Total Bookings</th>
+                    <th style="text-align:center;">Bookings</th>
                     <th>Last Stay</th>
                     <th>Last Room</th>
                     <th>Last Status</th>
+                    <th style="text-align:center;">Action</th>
                 </tr>
             </thead>
             <tbody>
-                <% int rowNum = 0;
-                   for (Guest g : guests) {
-                       rowNum++;
-                       String initial = (g.getGuestName() != null && !g.getGuestName().isEmpty())
-                                        ? String.valueOf(g.getGuestName().charAt(0)).toUpperCase() : "?";
-                       String statusBadge = "badge-pending";
-                       if ("CONFIRMED".equals(g.getLastStatus()))   statusBadge = "badge-confirmed";
-                       if ("CANCELLED".equals(g.getLastStatus()))   statusBadge = "badge-cancelled";
-                       if ("CHECKED_OUT".equals(g.getLastStatus())) statusBadge = "badge-checked-out";
+                <%
+                    int rowNum = 0;
+                    for (Guest g : guests) {
+                        rowNum++;
+                        String initial = (g.getGuestName() != null && !g.getGuestName().isEmpty())
+                                         ? String.valueOf(g.getGuestName().charAt(0)).toUpperCase() : "?";
+                        String st = g.getLastStatus() != null ? g.getLastStatus() : "";
+                        String badgeCls = "badge-pending";
+                        if ("CONFIRMED".equalsIgnoreCase(st))   badgeCls = "badge-confirmed";
+                        if ("CANCELLED".equalsIgnoreCase(st))   badgeCls = "badge-cancelled";
+                        if ("CHECKED_OUT".equalsIgnoreCase(st)) badgeCls = "badge-checked_out";
+                        String encodedContact = java.net.URLEncoder.encode(
+                                g.getContactNumber() != null ? g.getContactNumber() : "", "UTF-8");
                 %>
                 <tr>
-                    <td style="color:#999;font-size:0.82rem;"><%= rowNum %></td>
+                    <td style="color:#b0bec5;font-size:0.82rem;font-weight:600;"><%= rowNum %></td>
                     <td>
-                        <div class="guest-name">
-                            <span class="avatar"><%= initial %></span>
-                            <strong><%= g.getGuestName() != null ? g.getGuestName() : "-" %></strong>
+                        <div class="guest-cell">
+                            <div class="avatar-circle"><%= initial %></div>
+                            <div class="gname"><%= g.getGuestName() != null ? g.getGuestName() : "-" %></div>
                         </div>
                     </td>
-                    <td><%= g.getContactNumber() != null ? g.getContactNumber() : "-" %></td>
-                    <td style="font-size:0.85rem;color:#666;"><%= g.getAddress() != null ? g.getAddress() : "-" %></td>
-                    <td style="text-align:center;"><strong><%= g.getTotalReservations() %></strong></td>
-                    <td><%= g.getLastVisit() != null ? g.getLastVisit().toString() : "-" %></td>
-                    <td><%= g.getLastRoomType() != null ? g.getLastRoomType() : "-" %></td>
-                    <td><span class="badge <%= statusBadge %>"><%= g.getLastStatus() != null ? g.getLastStatus() : "-" %></span></td>
+                    <td style="font-size:0.87rem;">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#9aacba" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:-2px;margin-right:4px;"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.69 12 19.79 19.79 0 0 1 1.61 3.38 2 2 0 0 1 3.58 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L7.91 8.46a16 16 0 0 0 6.29 6.29l1.52-1.52a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                        <%= g.getContactNumber() != null ? g.getContactNumber() : "-" %>
+                    </td>
+                    <td style="font-size:0.83rem;color:#78909c;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                        <%= g.getAddress() != null && !g.getAddress().isEmpty() ? g.getAddress() : "&mdash;" %>
+                    </td>
+                    <td style="text-align:center;">
+                        <span class="bookings-pill"><%= g.getTotalReservations() %></span>
+                    </td>
+                    <td style="font-size:0.87rem;color:#546e7a;">
+                        <%= g.getLastVisit() != null ? g.getLastVisit().toString() : "&mdash;" %>
+                    </td>
+                    <td style="font-size:0.87rem;color:#546e7a;">
+                        <%= g.getLastRoomType() != null ? g.getLastRoomType() : "&mdash;" %>
+                    </td>
+                    <td>
+                        <% if (!st.isEmpty()) { %>
+                        <span class="badge <%= badgeCls %>"><%= st %></span>
+                        <% } else { %>&mdash;<% } %>
+                    </td>
+                    <td style="text-align:center;">
+                        <a href="<%= request.getContextPath() %>/guests/profile?contact=<%= encodedContact %>" class="btn-profile">
+                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                            View Profile
+                        </a>
+                    </td>
                 </tr>
                 <% } %>
             </tbody>
@@ -183,10 +285,13 @@
 function filterTable() {
     const query = document.getElementById('searchInput').value.toLowerCase();
     const rows  = document.querySelectorAll('#guestTable tbody tr');
+    let visible = 0;
     rows.forEach(row => {
-        const text = row.textContent.toLowerCase();
-        row.style.display = text.includes(query) ? '' : 'none';
+        const show = row.textContent.toLowerCase().includes(query);
+        row.style.display = show ? '' : 'none';
+        if (show) visible++;
     });
+    document.getElementById('visibleCount').textContent = visible;
 }
 </script>
 </body>

@@ -103,6 +103,21 @@ public class ReservationDAOImpl implements ReservationDAO {
     }
 
     @Override
+    public List<Reservation> findByContactNumber(String contactNumber) {
+        List<Reservation> list = new ArrayList<>();
+        String sql = "SELECT * FROM reservations WHERE contact_number = ? ORDER BY check_in_date DESC";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, contactNumber);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) list.add(mapRow(rs));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Error fetching reservations by contact.", e);
+        }
+        return list;
+    }
+
+    @Override
     public boolean update(Reservation r) {
         String sql = "UPDATE reservations SET guest_name=?, address=?, contact_number=?, guest_email=?, " +
                      "room_type=?, check_in_date=?, check_out_date=?, status=? WHERE id=?";

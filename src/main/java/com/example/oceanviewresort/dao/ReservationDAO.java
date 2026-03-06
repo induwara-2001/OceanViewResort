@@ -29,4 +29,7 @@ public interface ReservationDAO {
 
     /** Update an existing reservation record. Returns true if a row was updated. */
     boolean update(Reservation reservation);
+
+    /** Find all reservations for a given contact number ordered by check-in desc. */
+    List<Reservation> findByContactNumber(String contactNumber);
 }

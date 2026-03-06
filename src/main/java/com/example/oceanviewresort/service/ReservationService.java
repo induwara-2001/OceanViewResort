@@ -32,4 +32,7 @@ public interface ReservationService {
     boolean updateReservation(int id, String guestName, String address, String contactNumber,
                               String guestEmail, String roomType,
                               String checkInDate, String checkOutDate, String status);
+
+    /** Returns all reservations for a given contact number. */
+    java.util.List<com.example.oceanviewresort.model.Reservation> getReservationsByContact(String contactNumber);
 }

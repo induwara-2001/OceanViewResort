@@ -24,4 +24,9 @@ public class GuestServiceImpl implements GuestService {
     public int countUniqueGuests() {
         return guestDAO.countUniqueGuests();
     }
+
+    @Override
+    public Guest getGuestByContact(String contactNumber) {
+        return guestDAO.findByContact(contactNumber);
+    }
 }
