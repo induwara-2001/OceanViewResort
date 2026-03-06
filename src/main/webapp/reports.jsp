@@ -143,6 +143,48 @@
         td { padding: 13px 18px; font-size: 0.88rem; color: #334155; }
         .amount-cell { font-weight: 700; color: #059669; }
 
+        /* Download buttons */
+        .page-header { display: flex; align-items: flex-start; justify-content: space-between; flex-wrap: wrap; gap: 14px; }
+        .page-header-text h1 { font-size: 1.45rem; font-weight: 800; color: #0a2540; letter-spacing: -0.5px; }
+        .page-header-text p  { font-size: 0.84rem; color: #64748b; margin-top: 3px; }
+        .header-actions { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+
+        .btn-dl {
+            display: inline-flex; align-items: center; gap: 7px;
+            font-family: 'Inter', sans-serif; font-size: 0.84rem; font-weight: 600;
+            padding: 9px 18px; border-radius: 10px; cursor: pointer;
+            border: none; text-decoration: none; transition: all 0.18s;
+        }
+        .btn-dl-pdf {
+            background: linear-gradient(135deg, #0a4d68, #088395);
+            color: white;
+            box-shadow: 0 3px 12px rgba(8,131,149,0.35);
+        }
+        .btn-dl-pdf:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(8,131,149,0.45); }
+        .btn-dl-csv {
+            background: white; color: #0a4d68;
+            border: 1.5px solid #cbd5e1;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+        }
+        .btn-dl-csv:hover { border-color: #088395; color: #088395; transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .btn-dl svg { flex-shrink: 0; }
+
+        /* Print / save-as-PDF styles */
+        @media print {
+            .navbar, .header-actions, .no-print { display: none !important; }
+            body { background: white; }
+            .container { margin: 0; padding: 16px; }
+            .kpi-card:hover, .btn-dl { transform: none; box-shadow: none; }
+            .chart-card, .section-card, .kpi-card { box-shadow: none; border: 1px solid #dde4ea; break-inside: avoid; }
+            .charts-grid { grid-template-columns: 1fr 1fr; }
+            .chart-wrapper { height: 220px; }
+            .print-header { display: block !important; text-align: center; margin-bottom: 22px;
+                padding-bottom: 14px; border-bottom: 2px solid #0a4d68; }
+            .print-header h2 { font-size: 1.3rem; color: #0a2540; font-weight: 800; }
+            .print-header p  { font-size: 0.8rem; color: #64748b; margin-top: 3px; }
+        }
+        .print-header { display: none; }
+
         @media (max-width: 700px) { .charts-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
@@ -168,9 +210,34 @@
 
 <div class="container">
 
+    <!-- Print-only header (hidden on screen) -->
+    <div class="print-header">
+        <h2>&#127754; Ocean View Resort — Analytics Report</h2>
+        <p>Generated on <script>document.write(new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'}))</script></p>
+    </div>
+
     <div class="page-header">
-        <h1>&#128202; Analytics &amp; Reports</h1>
-        <p>Overview of resort performance and booking statistics</p>
+        <div class="page-header-text">
+            <h1>&#128202; Analytics &amp; Reports</h1>
+            <p>Overview of resort performance and booking statistics</p>
+        </div>
+        <div class="header-actions no-print">
+            <button class="btn-dl btn-dl-csv" onclick="downloadCSV()">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                    <polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                Export CSV
+            </button>
+            <button class="btn-dl btn-dl-pdf" onclick="window.print()">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="6 9 6 2 18 2 18 9"/>
+                    <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/>
+                    <rect x="6" y="14" width="12" height="8"/>
+                </svg>
+                Download PDF
+            </button>
+        </div>
     </div>
 
     <!-- KPI Cards -->
@@ -266,6 +333,41 @@ new Chart(statusCtx, {
         plugins: { legend: { position: 'bottom', labels: { font: { size: 11 }, padding: 12 } } }
     }
 });
+
+// CSV export
+function downloadCSV() {
+    const rows = [
+        ['Ocean View Resort — Analytics Report'],
+        ['Generated', new Date().toLocaleDateString('en-US', {year:'numeric',month:'long',day:'numeric'})],
+        [''],
+        ['--- Summary ---'],
+        ['Metric', 'Value'],
+        ['Total Reservations', '<%= totalReservations %>'],
+        ['Total Revenue', '$<%= String.format("%,.2f", totalRevenue) %>'],
+        ['Unique Guests', '<%= totalGuests %>'],
+        ['Total Rooms', '<%= totalRooms %>'],
+        ['Available Rooms', '<%= availableRooms %>'],
+        [''],
+        ['--- Revenue by Room Type ---'],
+        ['Room Type', 'Bookings', 'Estimated Revenue']
+    ];
+    <%
+    if (revenueMap != null) {
+        for (Map.Entry<String, Double> e : revenueMap.entrySet()) {
+            Long bk = byRoomType != null ? byRoomType.get(e.getKey()) : 0L;
+    %>
+    rows.push(['<%= e.getKey() %>', '<%= bk != null ? bk : 0 %>', '$<%= String.format("%,.2f", e.getValue()) %>']);
+    <% } } %>
+
+    const csv = rows.map(r => r.map(c => '"' + String(c).replace(/"/g, '""') + '"').join(',')).join('\n');
+    const blob = new Blob([csv], { type: 'text/csv' });
+    const url  = URL.createObjectURL(blob);
+    const a    = document.createElement('a');
+    a.href = url;
+    a.download = 'OceanViewResort_Analytics_' + new Date().toISOString().slice(0,10) + '.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+}
 
 // Bar: bookings by room type
 const roomCtx = document.getElementById('roomChart').getContext('2d');
