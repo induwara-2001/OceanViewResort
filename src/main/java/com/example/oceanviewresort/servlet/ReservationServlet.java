@@ -85,12 +85,13 @@ public class ReservationServlet extends HttpServlet {
         String guestName      = request.getParameter("guestName");
         String address        = request.getParameter("address");
         String contactNumber  = request.getParameter("contactNumber");
+        String guestEmail     = request.getParameter("guestEmail");
         String roomType       = request.getParameter("roomType");
         String checkInDate    = request.getParameter("checkInDate");
         String checkOutDate   = request.getParameter("checkOutDate");
 
         boolean success = reservationService.addReservation(
-                guestName, address, contactNumber, roomType, checkInDate, checkOutDate);
+                guestName, address, contactNumber, guestEmail, roomType, checkInDate, checkOutDate);
 
         if (success) {
             // Redirect to reservations list with success message
@@ -101,6 +102,7 @@ public class ReservationServlet extends HttpServlet {
             request.setAttribute("guestName",     guestName);
             request.setAttribute("address",       address);
             request.setAttribute("contactNumber", contactNumber);
+            request.setAttribute("guestEmail",    guestEmail);
             request.setAttribute("roomType",      roomType);
             request.setAttribute("checkInDate",   checkInDate);
             request.setAttribute("checkOutDate",  checkOutDate);

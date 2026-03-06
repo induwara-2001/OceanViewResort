@@ -12,10 +12,12 @@ public interface ReservationService {
     /**
      * Creates and stores a new reservation.
      * Generates the reservation number automatically.
+     * Sends an HTML confirmation email to guestEmail if provided.
      * Returns true on success.
      */
     boolean addReservation(String guestName, String address, String contactNumber,
-                           String roomType, String checkInDate, String checkOutDate);
+                           String guestEmail, String roomType,
+                           String checkInDate, String checkOutDate);
 
     /** Returns all reservations. */
     List<Reservation> getAllReservations();

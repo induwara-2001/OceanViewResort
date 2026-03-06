@@ -22,17 +22,18 @@ public class ReservationDAOImpl implements ReservationDAO {
     @Override
     public int save(Reservation r) {
         String sql = "INSERT INTO reservations " +
-                     "(reservation_number, guest_name, address, contact_number, room_type, check_in_date, check_out_date, status) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                     "(reservation_number, guest_name, address, contact_number, guest_email, room_type, check_in_date, check_out_date, status) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, r.getReservationNumber());
             ps.setString(2, r.getGuestName());
             ps.setString(3, r.getAddress());
             ps.setString(4, r.getContactNumber());
-            ps.setString(5, r.getRoomType());
-            ps.setDate(6, r.getCheckInDate());
-            ps.setDate(7, r.getCheckOutDate());
-            ps.setString(8, r.getStatus() != null ? r.getStatus() : "PENDING");
+            ps.setString(5, r.getGuestEmail());
+            ps.setString(6, r.getRoomType());
+            ps.setDate(7, r.getCheckInDate());
+            ps.setDate(8, r.getCheckOutDate());
+            ps.setString(9, r.getStatus() != null ? r.getStatus() : "PENDING");
 
             int affected = ps.executeUpdate();
             if (affected > 0) {
@@ -110,6 +111,7 @@ public class ReservationDAOImpl implements ReservationDAO {
         r.setGuestName(rs.getString("guest_name"));
         r.setAddress(rs.getString("address"));
         r.setContactNumber(rs.getString("contact_number"));
+        r.setGuestEmail(rs.getString("guest_email"));
         r.setRoomType(rs.getString("room_type"));
         r.setCheckInDate(rs.getDate("check_in_date"));
         r.setCheckOutDate(rs.getDate("check_out_date"));

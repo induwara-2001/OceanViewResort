@@ -240,7 +240,7 @@
 
     <!-- Quick Access Cards -->
     <div class="cards-grid">
-        <div class="card">
+        <div class="card" onclick="location.href='<%= request.getContextPath() %>/rooms'">
             <div class="icon">&#127968;</div>
             <h3>Rooms</h3>
             <p>Manage room availability</p>
@@ -250,17 +250,17 @@
             <h3>Reservations</h3>
             <p>View and manage bookings</p>
         </div>
-        <div class="card">
+        <div class="card" onclick="location.href='<%= request.getContextPath() %>/guests'">
             <div class="icon">&#128101;</div>
             <h3>Guests</h3>
             <p>Guest records & profiles</p>
         </div>
-        <div class="card">
+        <div class="card" onclick="location.href='<%= request.getContextPath() %>/payments'">
             <div class="icon">&#128184;</div>
             <h3>Payments</h3>
             <p>Billing &amp; invoices</p>
         </div>
-        <div class="card">
+        <div class="card" onclick="location.href='<%= request.getContextPath() %>/reports'">
             <div class="icon">&#128202;</div>
             <h3>Reports</h3>
             <p>Analytics &amp; statistics</p>

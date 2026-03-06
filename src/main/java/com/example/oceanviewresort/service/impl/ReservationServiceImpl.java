@@ -3,7 +3,9 @@ package com.example.oceanviewresort.service.impl;
 import com.example.oceanviewresort.dao.ReservationDAO;
 import com.example.oceanviewresort.dao.impl.ReservationDAOImpl;
 import com.example.oceanviewresort.model.Reservation;
+import com.example.oceanviewresort.service.EmailService;
 import com.example.oceanviewresort.service.ReservationService;
+import com.example.oceanviewresort.service.impl.EmailServiceImpl;
 
 import java.sql.Date;
 import java.time.LocalDate;
@@ -16,14 +18,17 @@ import java.util.List;
 public class ReservationServiceImpl implements ReservationService {
 
     private final ReservationDAO reservationDAO;
+    private final EmailService   emailService;
 
     public ReservationServiceImpl() {
         this.reservationDAO = new ReservationDAOImpl();
+        this.emailService   = new EmailServiceImpl();
     }
 
     @Override
     public boolean addReservation(String guestName, String address, String contactNumber,
-                                  String roomType, String checkInDate, String checkOutDate) {
+                                  String guestEmail, String roomType,
+                                  String checkInDate, String checkOutDate) {
 
         // Basic validation
         if (guestName == null || guestName.trim().isEmpty()) return false;
@@ -45,13 +50,20 @@ public class ReservationServiceImpl implements ReservationService {
                 guestName.trim(),
                 address != null ? address.trim() : "",
                 contactNumber.trim(),
+                guestEmail != null ? guestEmail.trim() : "",
                 roomType,
                 checkIn,
                 checkOut
         );
 
         int id = reservationDAO.save(reservation);
-        return id > 0;
+        if (id > 0) {
+            reservation.setId(id);
+            // Send confirmation email (non-blocking background thread)
+            emailService.sendReservationConfirmation(reservation);
+            return true;
+        }
+        return false;
     }
 
     @Override

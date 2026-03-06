@@ -10,6 +10,7 @@
     String vGuestName     = request.getAttribute("guestName")     != null ? (String) request.getAttribute("guestName")     : "";
     String vAddress       = request.getAttribute("address")       != null ? (String) request.getAttribute("address")       : "";
     String vContactNumber = request.getAttribute("contactNumber") != null ? (String) request.getAttribute("contactNumber") : "";
+    String vGuestEmail    = request.getAttribute("guestEmail")    != null ? (String) request.getAttribute("guestEmail")    : "";
     String vRoomType      = request.getAttribute("roomType")      != null ? (String) request.getAttribute("roomType")      : "";
     String vCheckIn       = request.getAttribute("checkInDate")   != null ? (String) request.getAttribute("checkInDate")   : "";
     String vCheckOut      = request.getAttribute("checkOutDate")  != null ? (String) request.getAttribute("checkOutDate")  : "";
@@ -256,6 +257,15 @@
                         <input type="tel" id="contactNumber" name="contactNumber"
                                placeholder="e.g. +94 77 123 4567"
                                value="<%= vContactNumber %>" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="guestEmail">Email Address
+                            <span style="font-weight:400;color:#aaa;font-size:0.78rem;">(confirmation email sent here)</span>
+                        </label>
+                        <input type="email" id="guestEmail" name="guestEmail"
+                               placeholder="e.g. guest@example.com"
+                               value="<%= vGuestEmail %>">
                     </div>
 
                     <!-- Booking Details section -->

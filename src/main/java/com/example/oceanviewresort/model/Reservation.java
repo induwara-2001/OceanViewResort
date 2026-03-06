@@ -12,6 +12,7 @@ public class Reservation {
     private String guestName;
     private String address;
     private String contactNumber;
+    private String guestEmail;
     private String roomType;
     private Date   checkInDate;
     private Date   checkOutDate;
@@ -21,11 +22,13 @@ public class Reservation {
     public Reservation() {}
 
     public Reservation(String reservationNumber, String guestName, String address,
-                       String contactNumber, String roomType, Date checkInDate, Date checkOutDate) {
+                       String contactNumber, String guestEmail, String roomType,
+                       Date checkInDate, Date checkOutDate) {
         this.reservationNumber = reservationNumber;
         this.guestName         = guestName;
         this.address           = address;
         this.contactNumber     = contactNumber;
+        this.guestEmail        = guestEmail;
         this.roomType          = roomType;
         this.checkInDate       = checkInDate;
         this.checkOutDate      = checkOutDate;
@@ -48,6 +51,9 @@ public class Reservation {
 
     public String getContactNumber() { return contactNumber; }
     public void setContactNumber(String contactNumber) { this.contactNumber = contactNumber; }
+
+    public String getGuestEmail() { return guestEmail; }
+    public void setGuestEmail(String guestEmail) { this.guestEmail = guestEmail; }
 
     public String getRoomType() { return roomType; }
     public void setRoomType(String roomType) { this.roomType = roomType; }
